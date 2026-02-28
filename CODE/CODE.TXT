@@ -1,0 +1,140 @@
+MongoDB Shell Practice Project Task Manager System – Database Operations
+
+------------------------------------------------------------------------
+
+1. Database & Collection Setup
+
+// Switch to (or create) the 'university' database
+use university;
+
+// db.createCollection(users) would throw an error.
+db.createCollection("users");
+
+// Insert a single document into the 'users' collection.
+db.users.insertOne({ 
+  name: "Raj", 
+  email: "raj@gmail.com"
+});
+
+// Switch to (or create) the 'task-manager' database
+use task-manager;
+
+// Explicitly create the 'tasks' collection
+db.createCollection("tasks");
+
+
+------------------------------------------------------------------------
+
+2. Inserting Documents
+
+// Insert a single document.
+// BEST PRACTICE: Standardized field names to 'task' (singular), 'createdAt', and 'isCompleted' (camelCase).
+db.tasks.insertOne({
+  task: "Learning MongoDB",
+  createdAt: "27th Feb, 2026",
+  deadline: "28th Feb, 2026",
+  user: "Raj",
+  isCompleted: false
+});
+
+// Clear the mongosh terminal screen
+cls;
+
+// Insert multiple documents by passing an array of objects.
+db.tasks.insertMany([
+  {
+    task: "workout",
+    createdAt: "27th Feb, 2026",
+    deadline: "28th Feb, 2026",
+    user: "Raj",
+    isCompleted: false
+  },
+  {
+    task: "WK",
+    createdAt: "2568",
+    deadline: "2569",
+    user: "SKT",
+    isCompleted: true
+  }
+]);
+
+// MongoDB methods are case-sensitive. Changed 'insertone' to 'insertOne'.
+// Consolidated your two separate 'Teaching' inserts into one correct insert.
+db.tasks.insertOne({
+  task: "Teaching",
+  createdAt: "25th Feb, 2026",
+  deadline: "26th Feb, 2026",
+  user: "SKT",
+  isCompleted: true
+});
+
+
+------------------------------------------------------------------------
+
+3. Reading and Updating Documents
+
+// Retrieve all documents in the 'tasks' collection
+db.tasks.find();
+
+// Retrieve all tasks assigned specifically to the user "SKT"
+db.tasks.find({ user: "SKT" });
+
+// Update the FIRST document that matches the filter { user: "SKT" }.
+// The $set operator modifies an existing field or adds a new one if it doesn't exist.
+db.tasks.updateOne(
+  { user: "SKT" },
+  { $set: { deadline: "29th Feb, 2026" } }
+);
+
+// Update ALL documents that match the filter { user: "Raj" }.
+db.tasks.updateMany(
+  { user: "Raj" },
+  { $set: { deadline: "29th Feb, 2026" } }
+);
+
+// Without this, your $gt (greater than) queries at the end of the script would return nothing.
+db.tasks.updateMany(
+  {}, // An empty filter matches every document in the collection
+  { $set: { procrastinated: 0 } }
+);
+
+// Update multiple documents using the $or logical operator.
+db.tasks.updateMany(
+  { 
+    $or: [
+      { task: "workout", user: "Raj" },
+      { task: "Teaching", user: "SKT" }
+    ] 
+  }, 
+  { $set: { isCompleted: true } } 
+);
+
+
+------------------------------------------------------------------------
+
+4. Deleting & Advanced Querying
+
+// Delete the FIRST document that matches this exact task name
+db.tasks.deleteOne({ task: "Learning MongoDB" });
+
+// Delete ALL documents where the 'isCompleted' status is true
+db.tasks.deleteMany({ isCompleted: true });
+
+// Retrieve tasks where the 'procrastinated' count is Greater Than ($gt) 0
+
+db.tasks.find({ procrastinated: { $gt: 0 } });
+
+// Retrieve tasks where the 'procrastinated' count is Greater Than ($gt) 3
+db.tasks.find({ procrastinated: { $gt: 3 } });
+
+// Alternative syntax to access a collection.
+// This bracket notation is highly useful if your collection name contains spaces or hyphens (e.g., db["my tasks"]).
+db["tasks"].find();
+
+------------------------------------------------------------------------
+
+Conclusion
+
+This project demonstrates database creation, collection creation, insert
+operations, read operations with filtering, update operations, delete
+operations, and index creation using proper MongoDB shell syntax.
